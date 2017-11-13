@@ -187,29 +187,29 @@ void ObserverR7(int NP, int NMaxT)
 
 void AnalyserR7(int NP, int NMaxT)
 {
-	int i;
+	int i; /* variable pour le parcours des parties (de 1 à NP) */
 	CreerTableauInitialR7();
-	int Res[3];
-	Res[0]=0;
-	Res[1]=0;
-	Res[2]=0;
+	int Res[3]; /* tableau pour stocker le nombre de parties gagnées selon le nombre de tour */
+	Res[0]=0; /* initialisation à 0 du nombre de parties gagnées en 1 tour */
+	Res[1]=0; /* initialisation à 0 du nombre de parties gagnées en 2 tours */
+	Res[2]=0; /* initialisation à 0 du nombre de parties gagnées en 3 tours */
 	for (i = 1 ; i <= NP ; i++) {
 		JouerUneR7(NMaxT,SansTrace);
-		if (TasVide(RebutR7)) {
-			Res[NumTourR7 - 1] = Res[NumTourR7 - 1] + 1;
+		if (TasVide(RebutR7)) { /* si le Rebut est vide alors c'est qu'on a gagné */
+			Res[NumTourR7 - 1] = Res[NumTourR7 - 1] + 1 ;
 		};
-		/*printf("Res 1 : %d \n Res 2 : %d \n Res 3 : %d \n",Res[0],Res[1],Res[2]);*/
 		ReformerTableauInitialR7();
 	};
 
-	float rt, r1, r2, r3, div;
-	div = 100.0/(double)NP;
-	rt = (Res[0]+Res[1]+Res[2]);
-	r1 = Res[0]*div;
-	r2 = Res[1]*div;
-	r3 = Res[2]*div;
+	float rg, rp, r1, r2, r3, pct;
+	pct = 100.0/(double)NP ;
+	rg = (Res[0]+Res[1]+Res[2])*pct ; /* gagnées */
+	rp = 100-rg ; /* perdues */
+	r1 = Res[0]*pct ; /* 1 tour */
+	r2 = Res[1]*pct ; /* 2 tours */
+	r3 = Res[2]*pct ; /* 3 tours */
 
 
-	printf("Nombre de parties jouées : %d \n Nombre total de parties gagnées : %lf \n Nombre de parties gagnées en 1 tour : %lf \n Nombre de parties gagnées en 2 tours : %lf \n Nombre de parties gagnées en 3 tours : %lf \n",NP, rt, r1, r2, r3);
+	printf("Nombre de parties jouées : %d \nPourcentage total de parties gagnées : %.2f %% \nPourcentage total de parties perdues : %.2f %% \n Pourcentage de parties gagnées en 1 tour : %.2f %% \n Pourcentage de parties gagnées en 2 tours : %.2f %% \n Pourcentage de parties gagnées en 3 tours : %.2f %% \n",NP, rg, rp, r1, r2, r3);
 }
 	
