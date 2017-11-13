@@ -169,6 +169,7 @@ void JouerUneR7(int NMaxT, ModeTrace MT)
     {
       printf("Vous avez perdu !\n");
     }
+/* N'afficher le résultat que si on est en mode AvecTrace ?? */
 }
 		
 void ObserverR7(int NP, int NMaxT)
@@ -186,6 +187,29 @@ void ObserverR7(int NP, int NMaxT)
 
 void AnalyserR7(int NP, int NMaxT)
 {
-  /* A COMPLETER */
+	int i;
+	CreerTableauInitialR7();
+	int Res[3];
+	Res[0]=0;
+	Res[1]=0;
+	Res[2]=0;
+	for (i = 1 ; i <= NP ; i++) {
+		JouerUneR7(NMaxT,SansTrace);
+		if (TasVide(RebutR7)) {
+			Res[NumTourR7 - 1] = Res[NumTourR7 - 1] + 1;
+		};
+		/*printf("Res 1 : %d \n Res 2 : %d \n Res 3 : %d \n",Res[0],Res[1],Res[2]);*/
+		ReformerTableauInitialR7();
+	};
+
+	float rt, r1, r2, r3, div;
+	div = 100.0/(double)NP;
+	rt = (Res[0]+Res[1]+Res[2]);
+	r1 = Res[0]*div;
+	r2 = Res[1]*div;
+	r3 = Res[2]*div;
+
+
+	printf("Nombre de parties jouées : %d \n Nombre total de parties gagnées : %lf \n Nombre de parties gagnées en 1 tour : %lf \n Nombre de parties gagnées en 2 tours : %lf \n Nombre de parties gagnées en 3 tours : %lf \n",NP, rt, r1, r2, r3);
 }
 	
