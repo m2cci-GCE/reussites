@@ -73,6 +73,7 @@ void CreerJeuInitialC4()
 		{
 			DeplacerHautSur(&TalonC4,&LigneTalonC4[i]);
 		}
+		BattreTas(&LigneTalonC4[i]);
 
 		/* Creer les 4 tas vides pour le tirage*/
 		CreerTasVide(LocLigneC4[i],etale,&LigneC4[i]);
@@ -100,13 +101,15 @@ void JouerUneC4()
 	Couleur Co,CoSource,CoDestination;
 
 	CreerJeuInitialC4();
+	
+	/* premier partie du jeu*/
 	for (Co=PremiereCouleur ; Co<=DerniereCouleur ; Co++)
 	{
 		RetournerCarteSur(&LigneTalonC4[Co]);
 	}
 
 	AfficherC4();
-
+        
 	CoSource = 1;
 	do
 	{
@@ -120,4 +123,38 @@ void JouerUneC4()
 		AfficherC4();
 	}
 	while (!TasVide(LigneTalonC4[CoSource]));
+	
+	/*deuxieme partie du jeu apres avoir fini le premier tas*/
+	for (CoSource = PremiereCouleur; CoSource<=DerniereCouleur; CoSource++)
+	{
+        	while (!TasVide(LigneTalonC4[CoSource]))
+        	{	        
+        	        DeplacerHautSur(&LigneTalonC4[CoSource],&LigneC4[CoSource]);
+        	        if (!TasVide(LigneTalonC4[CoSource]))
+        	        {
+        	                RetournerCarteSur(&LigneTalonC4[CoSource]);
+        	        }
+        	        AfficherC4();
+        	}
+	}
+	
+	/*gagné ou perdu*/
+	booleen Status = vrai;
+	for (CoSource = PremiereCouleur ; CoSource<=DerniereCouleur ; CoSource++)
+	{
+	        struct adCarte * AC;
+	        AC=LigneC4[CoSource].tete;
+	        while((AC != NULL)&&(AC->elt.CC==CoSource))
+	        {
+	                AC=AC->suiv;
+	        }
+	        if (AC != NULL)
+	        {
+	                Status = faux;
+	                break;
+	        }
+	}
+	Status==vrai?printf("Gagné\n"):printf("Perdu\n");
+	
+	
 }
