@@ -1,46 +1,19 @@
-/*LigneC4 : tableau de 4 tas, un pour chaque couleur
-
-TasCourrant : entier, indice du tas en cours d'utilisation. a e.i. =0 (trefle)
-
-
-etat initial LigneC4[0] contient 8 cartes (hasard)
-						 LigneC4[1] contient 8 cartes
-						 LigneC4[2] contient 8 cartes
-						 LigneC4[3] contient 8 cartes
-
-tant que LigneC4[TasCourrant] non vide:
-	retourner 1ere carte du tas LigneC4[TasCourant]
-	placer carte en dessous du tas de la couleur associee
-	changer le tas courrant avec le tas cible
-
-decouvre les cartes caches
-si elle sont sous le bon tas : gagne!
-sinon perdu
-
-*/
-
-
-
-
-
-
-
 #include <stdio.h>
 #include "C4.h"
-/*Tas de départ*/
 
+/* Tas de départ */
 Tas LigneTalonC4[DerniereCouleur+1];
 Tas TalonC4;
 Tas LigneC4[DerniereCouleur+1];
 int TasCourant = PremiereCouleur;
 
-/* Localisation des 4 tas de départ*/
+/* Localisation des 4 tas de départ */
 Localisation LocLigneTalonC4[DerniereCouleur+1];
 Localisation LocTalonC4;
 Localisation LocLigneC4[DerniereCouleur+1];
 
 
-/* Placement initial des tas*/
+/* Placement initial des tas */
 void SaisirLocTasC4()
 {
 	LocTalonC4.NC = 1;
@@ -57,6 +30,7 @@ void SaisirLocTasC4()
 	}
 }
 
+/* Création de la situation initiale de jeu */
 void CreerJeuInitialC4()
 {
 	SaisirLocTasC4();
@@ -79,9 +53,12 @@ void CreerJeuInitialC4()
 	}
 }
 
+/* Reformer le jeu entre chaque partie */
 void ReformerJeuInitialC4()
 {
 	Couleur Co;
+
+	/* On reforme le talon puis on le mélange */
 	for (Co=PremiereCouleur ; Co<=DerniereCouleur ; Co++)
 	{
 		EmpilerTas(&LigneC4[Co]);
@@ -90,6 +67,7 @@ void ReformerJeuInitialC4()
 	}
 	BattreTas(&TalonC4);
 
+	/* On redistrubue les cartes en 4 tas de 8 cartes */
 	for (Co=PremiereCouleur ; Co<=DerniereCouleur ; Co++)
 	{
 		int j;
@@ -98,10 +76,9 @@ void ReformerJeuInitialC4()
 			DeplacerHautSur(&TalonC4,&LigneTalonC4[Co]);
 		}
 	}
-}
-		
-		
+}	
 
+/* Affiche les tas avec leurs labels eventuels*/
 void AfficherC4()
 {
 	EffacerGraphique();
@@ -118,13 +95,15 @@ void AfficherC4()
 	AttendreCliquer();
 }
 
+/* Déroulement d'une partie de jeu */
 void JouerUneC4(booleen* Status, ModeTrace MT)
 {
 	Couleur Co,CoSource,CoDestination;
+	struct adCarte * AC;
 
 	CreerJeuInitialC4();
 	
-	/* premier partie du jeu*/
+	/* première étape du jeu */
 	for (Co=PremiereCouleur ; Co<=DerniereCouleur ; Co++)
 	{
 		RetournerCarteSur(&LigneTalonC4[Co]);
@@ -151,80 +130,76 @@ void JouerUneC4(booleen* Status, ModeTrace MT)
 	}
 	while (!TasVide(LigneTalonC4[CoSource]));
 	
-	/*deuxieme partie du jeu apres avoir fini le premier tas*/
+	/*deuxieme étape du jeu apres avoir fini le tas où l'on doit piocher */
 	for (CoSource = PremiereCouleur; CoSource<=DerniereCouleur; CoSource++)
 	{
-        	while (!TasVide(LigneTalonC4[CoSource]))
-        	{	        
-        	        DeplacerHautSur(&LigneTalonC4[CoSource],&LigneC4[CoSource]);
-        	        if (!TasVide(LigneTalonC4[CoSource]))
-        	        {
-        	                RetournerCarteSur(&LigneTalonC4[CoSource]);
-        	        }
-        	       if(MT==AvecTrace)
-        	       {
-        	        AfficherC4();
-        	        }
-        	}
+		while (!TasVide(LigneTalonC4[CoSource]))
+		{
+			DeplacerHautSur(&LigneTalonC4[CoSource],&LigneC4[CoSource]);
+			if (!TasVide(LigneTalonC4[CoSource]))
+			{
+				RetournerCarteSur(&LigneTalonC4[CoSource]);
+			}
+			if(MT==AvecTrace)
+			{
+				AfficherC4();
+			}
+		}
 	}
 	
-	/*gagné ou perdu*/
+	/* gagné ou perdu ? Vérification des couleurs des différents tas */
 	*Status = vrai;
 	for (CoSource = PremiereCouleur ; CoSource<=DerniereCouleur ; CoSource++)
 	{
-	        struct adCarte * AC;
-	        AC=LigneC4[CoSource].tete;
-	        while((AC != NULL)&&(AC->elt.CC==CoSource))
-	        {
-	                AC=AC->suiv;
-	        }
-	        if (AC != NULL)
-	        {
-	                *Status = faux;
-	                break;
-	        }
+		AC=LigneC4[CoSource].tete;
+		while((AC != NULL)&&(AC->elt.CC==CoSource))
+		{
+			AC=AC->suiv;
+		}
+		if (AC != NULL)
+		{
+			*Status = faux;
+			break;
+		}
 	}
-	
-	
-	
 }
 
 void ObserverC4(int NP)
 {
-        booleen Status;
-        int i=0;
-        CreerJeuInitialC4();
-        JouerUneC4(&Status,AvecTrace);
-         Status==vrai?printf("Vous avez gagné la partie %d !\n",i+1):printf("Vous avez perdu la partie %d !\n",i+1);
-        
-       
-        for ( i = 1 ; i <=NP-1 ; i++) 
-        {
-                ReformerJeuInitialC4();
-                JouerUneC4(&Status, AvecTrace);
-                Status==vrai?printf("Vous avez gagné la partie %d !\n",i+1):printf("Vous avez perdu la partie %d !\n",i+1);
-                
-        }
-        
-        
+	booleen Status;
+	int i;
+
+	/* Première partie */
+	CreerJeuInitialC4();
+	JouerUneC4(&Status,AvecTrace);
+	Status==vrai?printf("Vous avez gagné la partie %d !\n",i+1):printf("Vous avez perdu la partie %d !\n",i+1);
+
+	/* Suivantes si elles existent */
+	for (i=1 ; i<=NP-1 ; i++) 
+	{
+		ReformerJeuInitialC4();
+		JouerUneC4(&Status, AvecTrace);
+		Status==vrai?printf("Vous avez gagné la partie %d !\n",i+1):printf("Vous avez perdu la partie %d !\n",i+1);
+	}      
 }        
 
 void AnalyserC4(int NP)
 {
-        int i;
-        booleen Status;
-        int G=0;
-        int P=0;
-        double taux;
-        for ( i=1; i <= NP ; i++)
-        {
-                JouerUneC4(&Status,SansTrace);
-                ReformerJeuInitialC4();  
-                Status==vrai?G++:P++;  
-        }
-        
-        taux=100.0*(double)G/(double)NP;
-        
-        printf("Sur %d partie(s) jouée(s) vous en aves gagné %d et perdu %d.\n",NP,G,P);
-        printf("Taux de réussite : %.2lf%\n",taux);
+	int i;
+	booleen Status;
+	int G=0;
+	int P=0;
+	double taux;
+	for (i=1; i<=NP ; i++)
+	{
+		JouerUneC4(&Status,SansTrace);
+		ReformerJeuInitialC4();
+		Status==vrai?G++:P++;
+	}
+
+	taux=100.0*(double)G/(double)NP;
+
+	/* Affichage des données : nb de parties jouées, gagnées et du taux de réussite */
+	printf("Sur %d partie(s) jouée(s) vous en aves gagné %d et perdu %d.\n",NP,G,P);
+	printf("Taux de réussite : %.2lf%\n",taux);
 }
