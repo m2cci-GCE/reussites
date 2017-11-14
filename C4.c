@@ -73,12 +73,34 @@ void CreerJeuInitialC4()
 		{
 			DeplacerHautSur(&TalonC4,&LigneTalonC4[i]);
 		}
-		BattreTas(&LigneTalonC4[i]);
 
 		/* Creer les 4 tas vides pour le tirage*/
 		CreerTasVide(LocLigneC4[i],etale,&LigneC4[i]);
 	}
 }
+
+void ReformerJeuInitialC4()
+{
+	Couleur Co;
+	for (Co=PremiereCouleur ; Co<=DerniereCouleur ; Co++)
+	{
+		EmpilerTas(&LigneC4[Co]);
+		RetournerTas(&LigneC4[Co]);
+		PoserTasSurTas(&LigneC4[Co],&TalonC4);
+	}
+	BattreTas(&TalonC4);
+
+	for (Co=PremiereCouleur ; Co<=DerniereCouleur ; Co++)
+	{
+		int j;
+		for (j=0 ; j<8 ; j++)
+		{
+			DeplacerHautSur(&TalonC4,&LigneTalonC4[Co]);
+		}
+	}
+}
+		
+		
 
 void AfficherC4()
 {
@@ -96,7 +118,7 @@ void AfficherC4()
 	AttendreCliquer();
 }
 
-void JouerUneC4()
+void JouerUneC4(booleen* Status, ModeTrace MT)
 {
 	Couleur Co,CoSource,CoDestination;
 
@@ -107,9 +129,11 @@ void JouerUneC4()
 	{
 		RetournerCarteSur(&LigneTalonC4[Co]);
 	}
-
+        if (MT==AvecTrace)
+        {
 	AfficherC4();
-        
+        }
+	
 	CoSource = 1;
 	do
 	{
@@ -119,8 +143,11 @@ void JouerUneC4()
 		{
 			RetournerCarteSur(&LigneTalonC4[CoSource]);
 		}
-		CoSource = CoDestination;
+	       	CoSource = CoDestination;
+		if (MT==AvecTrace)
+		{
 		AfficherC4();
+		}
 	}
 	while (!TasVide(LigneTalonC4[CoSource]));
 	
@@ -134,12 +161,15 @@ void JouerUneC4()
         	        {
         	                RetournerCarteSur(&LigneTalonC4[CoSource]);
         	        }
+        	       if(MT==AvecTrace)
+        	       {
         	        AfficherC4();
+        	        }
         	}
 	}
 	
 	/*gagné ou perdu*/
-	booleen Status = vrai;
+	*Status = vrai;
 	for (CoSource = PremiereCouleur ; CoSource<=DerniereCouleur ; CoSource++)
 	{
 	        struct adCarte * AC;
@@ -150,11 +180,51 @@ void JouerUneC4()
 	        }
 	        if (AC != NULL)
 	        {
-	                Status = faux;
+	                *Status = faux;
 	                break;
 	        }
 	}
-	Status==vrai?printf("Gagné\n"):printf("Perdu\n");
 	
 	
+	
+}
+
+void ObserverC4(int NP)
+{
+        booleen Status;
+        int i=0;
+        CreerJeuInitialC4();
+        JouerUneC4(&Status,AvecTrace);
+         Status==vrai?printf("Vous avez gagné la partie %d !\n",i+1):printf("Vous avez perdu la partie %d !\n",i+1);
+        
+       
+        for ( i = 1 ; i <=NP-1 ; i++) 
+        {
+                ReformerJeuInitialC4();
+                JouerUneC4(&Status, AvecTrace);
+                Status==vrai?printf("Vous avez gagné la partie %d !\n",i+1):printf("Vous avez perdu la partie %d !\n",i+1);
+                
+        }
+        
+        
+}        
+
+void AnalyserC4(int NP)
+{
+        int i;
+        booleen Status;
+        int G=0;
+        int P=0;
+        double taux;
+        for ( i=1; i <= NP ; i++)
+        {
+                JouerUneC4(&Status,SansTrace);
+                ReformerJeuInitialC4();  
+                Status==vrai?G++:P++;  
+        }
+        
+        taux=100.0*(double)G/(double)NP;
+        
+        printf("Sur %d partie(s) jouée(s) vous en aves gagné %d et perdu %d.\n",NP,G,P);
+        printf("Taux de réussite : %.2lf%\n",taux);
 }

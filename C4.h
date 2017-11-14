@@ -1,3 +1,4 @@
 #include "AfficherTas.h"
 
-void JouerUneC4(void);
+void ObserverC4(int);
+void AnalyserC4(int);
