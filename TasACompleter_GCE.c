@@ -132,7 +132,15 @@ void CreerTasVide(Localisation L, Mode M, Tas *T)
 associe à T un tas vide actif placé en L et de mode d'étalement M.
 Pré-condition : l'emplacement L est disponible
 **************************************************************** */
-void CreerTasVide(Localisation L, Mode M, Tas *T) {
+void CreerTasVide(Localisation L, Mode M, Tas *T)
+{
+	T = (Tas *) malloc(sizeof(Tas));
+	T->LT = L;
+	T->RT = actif;
+	T->MT = M;
+	T->HT = 0;
+	T->tete = NULL;
+	T->queue = NULL;
 }
 
 /* *************************************************************
@@ -141,7 +149,9 @@ rend le tas vide inactif. En particulier, la place qu'il occupait
 devient libre pour un autre tas.
 Pré-condition : le tas T est vide et actif
 **************************************************************** */
-void SupprimerTasVide(Tas *T) {
+void SupprimerTasVide(Tas *T)
+{
+	free(T);
 }
 
 /* *************************************************************
@@ -152,7 +162,52 @@ Donne leur valeur aux variables globales NbCartes et PremierRang.
 Pré-condition : l'emplacement L est libre
                 N==52 ou N==32
 **************************************************************** */
-void CreerJeuNeuf(int N, Localisation L, Tas *T) {
+void CreerJeuNeuf(int N, Localisation L, Tas *T)
+{
+	Couleur Co;
+	Rang Rg;
+	Carte * Ca;
+	CreerTasVide(L,cache,T);
+	struct adCarte * premiereCarte,derniereCarte;
+
+	/* carte fictive pour chainer en une seule boucle */
+	premiereCarte = (struct adCarte *) malloc(struct adCarte);
+	derniereCarte = premiereCarte;
+
+	if (N==52)
+	{
+		PremierRang = deux;
+		NbCartes = 52;
+	}
+	else
+	{
+		PremierRang = sept;
+		NbCartes = 32;
+	}
+
+	/* génération de la liste de carte */
+	for (Co=PremiereCouleur ; Co<=DerniereCouleur ; Co++)
+	{
+		for (Rg=PremierRang ; Rg<=DernierRang ; Rg++)
+		{
+			struct adCarte * adCa;
+			adCa = (struct adCarte *) malloc(sizeof(struct adCarte));
+			adCa->elt.CC = Co;
+			adCa->elt.RC = Rg;
+			adCa->elt.VC = faux;
+			adCa->suiv=NULL;
+			adCa->prec = derniereCarte;
+			derniereCarte->suiv = adCa;
+			derniereCarte = adCa;
+		}
+	}
+
+	/* lien de la premiere et la derniere carte dans le tas */
+	T->tete = premiereCarte->suiv;
+	T->queue = derniereCarte;
+
+	/* libération de la carte fictive */
+	free(premiereCarte)
 }
 
 	/* Consultation des cartes d'un tas: ne deplace pas la carte */
