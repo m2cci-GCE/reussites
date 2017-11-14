@@ -58,14 +58,15 @@ void ReformerTableauInitialQLL() {
 	printf("Tableau vidé \n");
 	PoserTasSurTas(&(LigneQLL[0]), &TalonQLL);
 	RetournerTas(&TalonQLL);
-
-	/* Création des tas de la ligne de jeu */
+	L = 2;
 	int i;
-	for (i = 0 ; i < L ; i++) {
+	for (i = 0 ; i < 2 ; i++) {
+		printf("rentre \n");
 		CreerTasVide(LocSeriesQLL[i], empile, &(LigneQLL[i]));
 		DeplacerHautSur(&TalonQLL, &(LigneQLL[i]));
 		RetournerCarteSur(&(LigneQLL[i]));
 	}
+	
 	printf("Création ligne neuve \n");
 
 }
@@ -99,7 +100,6 @@ void JouerTasQLL(Tas *T, ModeTrace MT){
 }
 
 int ComparerTas(Tas Tdroite, Tas Tgauche) {
-	printf("ComparerTas \n");
 	booleen OK = faux;
 	if ( MemeRang(CarteSur(Tdroite), CarteSur(Tgauche)) || MemeCouleur(CarteSur(Tdroite), CarteSur(Tgauche)) ) {
 		OK = vrai ;
@@ -108,8 +108,6 @@ int ComparerTas(Tas Tdroite, Tas Tgauche) {
 }
 
 void ParcourirTas(Tas *TabT, ModeTrace MT){
-	printf("ParcourirTas \n");
-	printf("L = %d \n",L);
 	booleen stable = faux;
 	int k;
 	int i;
@@ -119,16 +117,10 @@ void ParcourirTas(Tas *TabT, ModeTrace MT){
 		printf("i = %d \n",i);
 		while ( (L-i) >= 2 && !(ComparerTas(TabT[L-i], TabT[L-2-i])) ) {
 			i = i+1;
-			printf("i = %d \n",i);
 		}
 
-		printf("L-i = : %d \n", L-i);
 		if ( (L-i) >= 2 ) {
-			printf("rentre \n");
 			for (k = 0 ; k < L-1 ; k++) {
-		
-				printf("k = %d \n", k);
-				printf("L = %d \n",L);
 				PoserTasSurTas(&(TabT[L-1-i+k]), &(TabT[L-2-i+k]));
 			}
 			L = L-1;
