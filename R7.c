@@ -161,15 +161,17 @@ void JouerUneR7(int NMaxT, ModeTrace MT)
       JouerUnTourR7(MT);
       NumTourR7 = NumTourR7 + 1;
     }
-  if (TasVide(RebutR7))
-    {
-      printf("Vous avez gagné en %d tours !\n",NumTourR7);
-    }
-  else
-    {
-      printf("Vous avez perdu !\n");
-    }
-/* N'afficher le résultat que si on est en mode AvecTrace ?? */
+  /* N'afficher le résultat que si on est en mode AvecTrace */
+  if (MT==AvecTrace) { 
+    if (TasVide(RebutR7))
+      {
+        printf("Vous avez gagné en %d tours !\n",NumTourR7);
+      }
+    else
+      {
+        printf("Vous avez perdu !\n");
+      }
+  }
 }
 		
 void ObserverR7(int NP, int NMaxT)
