@@ -55,19 +55,15 @@ void ReformerTableauInitialQLL() {
 	for (j = 1 ; j < L ; j ++) {
 		PoserTasSurTas(&(LigneQLL[L-j]), &(LigneQLL[L-j-1]));
 	}
-	printf("Tableau vidé \n");
 	PoserTasSurTas(&(LigneQLL[0]), &TalonQLL);
 	RetournerTas(&TalonQLL);
 	L = 2;
 	int i;
 	for (i = 0 ; i < 2 ; i++) {
-		printf("rentre \n");
 		CreerTasVide(LocSeriesQLL[i], empile, &(LigneQLL[i]));
 		DeplacerHautSur(&TalonQLL, &(LigneQLL[i]));
 		RetournerCarteSur(&(LigneQLL[i]));
 	}
-	
-	printf("Création ligne neuve \n");
 
 }
 
@@ -89,7 +85,7 @@ void AfficherQLL(){
 void JouerTasQLL(Tas *T, ModeTrace MT){
 	LocSeriesQLL[L].NC = LocSeriesQLL[L-1].NC + 1 ;
 	LocSeriesQLL[L].NL = c;
-	printf("Localisation Carte tirée : %d -- %d \n", LocSeriesQLL[L].NC, LocSeriesQLL[L].NL);
+	/*printf("Localisation Carte tirée : %d -- %d \n", LocSeriesQLL[L].NC, LocSeriesQLL[L].NL);*/
 	CreerTasVide(LocSeriesQLL[L], empile, &(LigneQLL[L]));
 	DeplacerHautSur(T, &(LigneQLL[L]));
 	RetournerCarteSur(&(LigneQLL[L]));
@@ -114,7 +110,7 @@ void ParcourirTas(Tas *TabT, ModeTrace MT){
 	i=1;
 	while (!stable) {
 		booleen mouv = faux;
-		printf("i = %d \n",i);
+		/*printf("i = %d \n",i);*/
 		while ( (L-i) >= 2 && !(ComparerTas(TabT[L-i], TabT[L-2-i])) ) {
 			i = i+1;
 		}
@@ -200,7 +196,34 @@ void ObserverQLL(int NP, int NbCarteJeu){
 
 void AnalyserQLL(int NP, int NbCarteJeu){
 
+	int i;
+	CreerTableauInitialQLL(NbCarteJeu);
+	
+	int nbP = 0 ; /* Nombre de parties perdues */
+	int nbG = 0 ; /* Nombre de parties gagnées */
+
+	for (i = 1 ; i <= NP ; i++) {
+		JouerUneQLL(SansTrace, NbCarteJeu);
+		if (L==2) {
+			nbG = nbG + 1 ;
+		}
+		else {
+			nbP = nbP + 1;
+		}
+	}
+	
+	float pct, rg, rp;
+	pct = 100.0/(double)NP;
+	rg = nbG*pct;
+	rp = nbP*pct;
+
+	printf("Nombre de parties jouées : %d \nPourcentage total de parties gagnées : %.2f %% \nPourcentage total de parties perdues : %.2f %% \n",NP, rg, rp);
+
 }
+
+
+
+
 
 
 
