@@ -35,6 +35,5 @@ int main(void)
 		}
 		SaisirCommande(&Commande);
 	}
-	printf (TexteAuRevoir) ;
-				
+	printf (TexteAuRevoir);	
 }
