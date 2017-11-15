@@ -131,7 +131,7 @@ Pré-condition : l'emplacement L est disponible
 **************************************************************** */
 void CreerTasVide(Localisation L, Mode M, Tas *T)
 {
-	T = (Tas *) malloc (sizeof(tas));
+	T = (Tas *) malloc (sizeof(Tas));
 	T->LT = L;
 	T->MT = M;
 	T->RT = actif;
