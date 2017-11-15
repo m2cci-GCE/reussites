@@ -88,6 +88,8 @@ void ReformerTableauInitialMD(){
 
   int j;
   Couleur Co;
+  struct adCarte *i;  
+
 
   /* On reforme le talon, en empilant les cartes des tas de stockage et des séries croissantes */ 
   for(j=0; j<4; j++){
@@ -108,6 +110,14 @@ void ReformerTableauInitialMD(){
     }
 
   BattreTas(&TalonMD);
+
+  
+  i = TalonMD.tete;
+
+  while((*i).suiv != NULL){
+	(*i).elt.VC = faux;
+	i = (*i).suiv;
+  }
 }
 
 
@@ -138,111 +148,113 @@ void AfficherMD(){
 
 
 
+void PlacerStock(Tas *T, booleen *OK){
 
+  int j=0;
+  booleen b = faux;
+  Rang RT, RSurTS;
 
-/* Jouer Montee-Descente */
-
-void JouerTasMD(Tas *T, booleen *OK){
-
-  Couleur Co;
-  /*Rang RT, RSous, RSur;*/
-  Rang RT, RSurSC, RSurTS1, RSurTS2, RSurTS3, RSurTS4;
-
-  Co = LaCouleur(CarteSur(*T));
   RT = LeRang(CarteSur(*T));
-  /*RSous = LeRang(CarteSous(LigneMD[Co]));*/
-  RSurSC = LeRang(CarteSur(LigneMD[Co]));
+  
 
-  /*RSurTS1 = LeRang(CarteSur(TStockMD[0]));
-  RSurTS2 = LeRang(CarteSur(TStockMD[1]));
-  RSurTS3 = LeRang(CarteSur(TStockMD[2]));
-  RSurTS4 = LeRang(CarteSur(TStockMD[3]));*/
+  while(j<=4 && !b){
 
-  *OK = vrai;
-
-  if ((RT == RangSuivant(RSurSC)) || (RT == Sept && TasVide(LigneMD[Co])))
-    DeplacerHautSur(T, &(LigneMD[Co]));
-/*
-  else if ((RT <= RSurTS1) || (TasVide(TStockMD[0])))
-    DeplacerHautSur(T, &(TStockMD[0]));
-  else if ((RT <= RSurTS2) || (TasVide(TStockMD[1])))
-    DeplacerHautSur(T, &(TStockMD[1]));
-  else if ((RT <= RSurTS3) || (TasVide(TStockMD[2])))
-    DeplacerHautSur(T, &(TStockMD[2]));
-  else if ((RT <= RSurTS4) || (TasVide(TStockMD[3])))
-    DeplacerHautSur(T, &(TStockMD[3]));
-
-  else 
-    *OK = faux;
-*/
-
-  else{
-	if(TasVide(TStockMD[0])){
-		DeplacerHautSur(T, &(TStockMD[0]));
+	if(TasVide(TStockMD[j])){
+		DeplacerHautSur(T, &(TStockMD[j]));
+		b = vrai;
 	}else{
-		RSurTS1 = LeRang(CarteSur(TStockMD[0]));
-		if(RT <= RSurTS1){
-			DeplacerHautSur(T, &(TStockMD[0]));
+		RSurTS = LeRang(CarteSur(TStockMD[j]));
+		if(RT <= RSurTS){
+			DeplacerHautSur(T, &(TStockMD[j]));
+			b = vrai;
 		}else{
-			if(TasVide(TStockMD[1])){
-				DeplacerHautSur(T, &(TStockMD[1]));
-			}else{
-				RSurTS2 = LeRang(CarteSur(TStockMD[1]));
-				if(RT <= RSurTS2){
-					DeplacerHautSur(T, &(TStockMD[1]));
-				}else{
-					if(TasVide(TStockMD[2])){
-						DeplacerHautSur(T, &(TStockMD[2]));
-					}else{
-						if(TasVide(TStockMD[2])){
-							DeplacerHautSur(T, &(TStockMD[2]));
-						}else{
-							RSurTS3 = LeRang(CarteSur(TStockMD[2]));
-							if(RT <= RSurTS3){
-								DeplacerHautSur(T, &(TStockMD[2]));
-							}else{
-								if(TasVide(TStockMD[3])){
-									DeplacerHautSur(T, &(TStockMD[3]));
-								}else{
-									RSurTS4 = LeRang(CarteSur(TStockMD[3]));
-									if(RT <= RSurTS4){
-										DeplacerHautSur(T, &(TStockMD[3]));
-									}else{
-										*OK = faux;
-									}
-								}
-							}
-						}
-					}
-				}
-			}
-		}
-	}	
+			j = j+1;
+  		}
+	}
+  }
+
+  if(j>=4){
+	*OK = faux;
   }
 }
 
 
 
-void JouerStocksMD(Tas *T){
+void JouerTasMD(Tas *T, booleen *OK)
+{
+  Couleur Co;
+  Rang RT, RSur;/*, RSurTS1, RSurTS2, RSurTS3, RSurTS4;*/
+
+  Co = LaCouleur(CarteSur(*T));
+  RT = LeRang(CarteSur(*T));
+
+  *OK = vrai;
+
+  if (TasVide(LigneMD[Co])){
+	if(RT == Sept){
+	        DeplacerHautSur(T, &(LigneMD[Co]));
+	}else{
+		PlacerStock(T, OK);
+	}
+  }
+
+
+
+  else{
+	RSur = LeRang(CarteSur(LigneMD[Co]));
+	if(RT == RangSuivant(RSur)){
+		DeplacerHautSur(T, &(LigneMD[Co]));
+	}else{
+		PlacerStock(T, OK);
+	}
+  }	
+}
+
+
+
+
+void JouerStockMD(Tas *T, ModeTrace MT){
 
   Couleur Co;
   Rang RT, RSurSC;
 
-  Co = LaCouleur(CarteSur(*T));
-  RT = LeRang(CarteSur(*T));
-  RSurSC = LeRang(CarteSur(LigneMD[Co]));
+  if(!TasVide(*T)){
 
-  if (RT == RangSuivant(RSurSC))
-    DeplacerHautSur(T, &(LigneMD[Co]));
+	RT = LeRang(CarteSur(*T));
+	Co = LaCouleur(CarteSur(*T));
+
+	if(!TasVide(LigneMD[Co])){
+		RSurSC = LeRang(CarteSur(LigneMD[Co]));
+
+		while((!TasVide(*T)) && (!TasVide(LigneMD[Co])) && (RT == RangSuivant(RSurSC))){
+
+			DeplacerHautSur(T, &(LigneMD[Co]));
+
+			if(!TasVide(*T)){
+				RT = LeRang(CarteSur(*T));
+				Co = LaCouleur(CarteSur(*T));
+			}
+
+			if(!TasVide(LigneMD[Co])){
+				RSurSC = LeRang(CarteSur(LigneMD[Co]));
+				if (MT == AvecTrace)
+					AfficherMD();
+			}
+		}
+	}
+  }
 }
+
+
 
 
 
 
 void JouerUnTourMD(ModeTrace MT){
   
-  int j;
+  int j=0;
   booleen OK;
+
   
   if (MT == AvecTrace)
     AfficherMD();
@@ -250,24 +262,16 @@ void JouerUnTourMD(ModeTrace MT){
   do{	/* Jeu du talon, puis des stocks*/ 
       /* On sait que le talon n'est pas vide */
       /* Jouer le talon */
-      RetournerCarteSur(&TalonMD);
-      JouerTasMD(&TalonMD, &OK);
-      
-      for(j=0; j<4; j++){
+	RetournerCarteSur(&TalonMD);
+	if (MT == AvecTrace)
+		AfficherMD();
+	JouerTasMD(&TalonMD, &OK);
+	if (MT == AvecTrace)
+		AfficherMD();
 
-      	      JouerStocksMD(&(TStockMD[j]));
-      }
-/*
-      if (!OK)
-	      DeplacerHautSur(&TalonR7, &RebutR7);
-      if (MT == AvecTrace)
-	      AfficherMD();
-      while (OK && !TasVide(TalonMD))	{
-	      On a joué le talon. Le talon n'est pas vide: on rejoue le talon */
-	      /*JouerTasMD(&RebutR7, &OK);
-	      if (OK && (MT == AvecTrace))
-	         AfficherMD();
-	   }*/
+	for(j=0; j<4; j++){
+		JouerStockMD(&(TStockMD[j]), MT);
+	}
   }
   while (OK && !TasVide(TalonMD));
 }
@@ -278,29 +282,23 @@ void JouerUnTourMD(ModeTrace MT){
 void JouerUneMD(ModeTrace MT){
 
   JouerUnTourMD(MT);
-  /* Jeu d'au plus NMaxT tours */
-/*
-  while (!(TasVide(RebutR7)) && (NumTourR7 < NMaxT))  
-    {
-      RetournerTas(&RebutR7);
-      PoserTasSurTas(&RebutR7, &TalonR7);
-      JouerUnTourR7(MT);
-      NumTourR7 = NumTourR7 + 1;
-    }
-  N'afficher le résultat que si on est en mode AvecTrace */
+
+  int i;
+  booleen b = faux;
+
+  for(i=0; i<4; i++){
+		b = b || TasVide(TStockMD[i]);
+  }
+
+  /*N'afficher le résultat que si on est en mode AvecTrace */
   if (MT==AvecTrace) { 
-    if (TasVide(TalonMD))
-      {
-        printf("Vous avez gagné !\n");
-      }
-    else
-      {
-        printf("Vous avez perdu !\n");
-      }
+	if (TasVide(TalonMD) && b){
+		printf("Vous avez GAGNE !\n");
+	}else{
+		printf("Vous avez perdu !\n");
+	}
   }
 }
-
-
 
 
 
@@ -323,8 +321,40 @@ void ObserverMD(int NP)
 
 
 
+
 void AnalyserMD(int NP){
 
+	int i; /* variable pour le parcours des parties (de 1 à NP) */
+	int r=0;
 
+	int k;
+	booleen b = faux;
+
+
+	CreerTableauInitialMD();
+
+	for (i = 1 ; i <= NP ; i++) {
+
+		JouerUneMD(SansTrace);
+
+		for(k=0; k<4; k++){
+			b = b || TasVide(TStockMD[k]);
+  		}
+
+		if (TasVide(TalonMD) && b){ /* si le Talon est vide alors c'est qu'on a gagné */
+			r = r+1;
+		}
+
+		ReformerTableauInitialMD();
+	}
+
+
+	float rg, rp, pct;
+	pct = 100.0/(double)NP ;
+	rg = r*pct ; /* gagnées */
+	rp = 100-rg ; /* perdues */
+
+
+	printf("Nombre de parties jouées : %d \nPourcentage total de parties gagnees : %.2f %% \nPourcentage total de parties perdues : %.2f %% \n ", NP, rg, rp);
 }
 

@@ -19,9 +19,7 @@
 #define         TexteNbAAnalyser         "Choisissez le nombre de parties a analyser : "
 #define         TexteAuRevoir            "Au revoir \n" 
 
-int main(void)
-{
-  const NBMAXT = 3;
+int main(void){
 
   CodeCommande    Commande ;
   int nbparties ;

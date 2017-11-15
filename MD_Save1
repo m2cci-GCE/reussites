@@ -1,0 +1,101 @@
+/* Jouer Montee-Descente */
+
+void JouerTasMD(Tas *T, booleen *OK){
+
+  Couleur Co;
+  /*Rang RT, RSous, RSur;*/
+  Rang RT, RSurTS1, RSurTS2, RSurTS3, RSurTS4;/*RSurSC;*/
+
+  Co = LaCouleur(CarteSur(*T));
+  RT = LeRang(CarteSur(*T));
+  /*RSous = LeRang(CarteSous(LigneMD[Co]));*/
+
+  /*RSurSC = LeRang(CarteSur(LigneMD[Co]));*/
+
+  /*RSurTS1 = LeRang(CarteSur(TStockMD[0]));
+  RSurTS2 = LeRang(CarteSur(TStockMD[1]));
+  RSurTS3 = LeRang(CarteSur(TStockMD[2]));
+  RSurTS4 = LeRang(CarteSur(TStockMD[3]));*/
+
+  *OK = vrai;
+
+  if ((RT == Sept && TasVide(LigneMD[Co])))
+        DeplacerHautSur(T, &(LigneMD[Co]));
+
+  else if((RT == RangSuivant(LeRang(CarteSur(LigneMD[Co])))))
+	DeplacerHautSur(T, &(LigneMD[Co]));
+
+/*
+  else if ((RT <= RSurTS1) || (TasVide(TStockMD[0])))
+    DeplacerHautSur(T, &(TStockMD[0]));
+  else if ((RT <= RSurTS2) || (TasVide(TStockMD[1])))
+    DeplacerHautSur(T, &(TStockMD[1]));
+  else if ((RT <= RSurTS3) || (TasVide(TStockMD[2])))
+    DeplacerHautSur(T, &(TStockMD[2]));
+  else if ((RT <= RSurTS4) || (TasVide(TStockMD[3])))
+    DeplacerHautSur(T, &(TStockMD[3]));
+
+  else 
+    *OK = faux;
+*/
+
+  else{
+	if(TasVide(TStockMD[0])){
+		DeplacerHautSur(T, &(TStockMD[0]));
+	}else{
+		RSurTS1 = LeRang(CarteSur(TStockMD[0]));
+		if(RT <= RSurTS1){
+			DeplacerHautSur(T, &(TStockMD[0]));
+		}else{
+			if(TasVide(TStockMD[1])){
+				DeplacerHautSur(T, &(TStockMD[1]));
+			}else{
+				RSurTS2 = LeRang(CarteSur(TStockMD[1]));
+				if(RT <= RSurTS2){
+					DeplacerHautSur(T, &(TStockMD[1]));
+				}else{
+					if(TasVide(TStockMD[2])){
+						DeplacerHautSur(T, &(TStockMD[2]));
+					}else{
+						if(TasVide(TStockMD[2])){
+							DeplacerHautSur(T, &(TStockMD[2]));
+						}else{
+							RSurTS3 = LeRang(CarteSur(TStockMD[2]));
+							if(RT <= RSurTS3){
+								DeplacerHautSur(T, &(TStockMD[2]));
+							}else{
+								if(TasVide(TStockMD[3])){
+									DeplacerHautSur(T, &(TStockMD[3]));
+								}else{
+									RSurTS4 = LeRang(CarteSur(TStockMD[3]));
+									if(RT <= RSurTS4){
+										DeplacerHautSur(T, &(TStockMD[3]));
+									}else{
+										*OK = faux;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}	
+  }
+}
+
+
+
+void JouerStocksMD(Tas *T){
+
+  Couleur Co;
+  Rang RT, RSurSC;
+
+  Co = LaCouleur(CarteSur(*T));
+  RT = LeRang(CarteSur(*T));
+  RSurSC = LeRang(CarteSur(LigneMD[Co]));
+
+  if (RT == RangSuivant(RSurSC))
+    DeplacerHautSur(T, &(LigneMD[Co]));
+}
+
