@@ -9,6 +9,10 @@ LIB = ${DIR}/lib
 .c.o :
 	gcc -Wall -g -ansi -c -I${INCL} $<
 
+
+ReussiteCarre.e: ${LIB}/libmachine_trace.a Alea.o Tas.o AfficherTas.o Carre.o InteractionCarre.o ReussiteCarre.c
+	gcc  -g -I${INCL} -o ReussiteCarre.e ReussiteCarre.c InteractionCarre.o Carre.o Tas.o AfficherTas.o Alea.o -L${LIB} -lmachine_trace -L/usr/X11R6/lib -lX11 -lm
+
 ReussiteR7.e: ${LIB}/libmachine_trace.a Alea.o Tas.o AfficherTas.o R7.o InteractionR7.o ReussiteR7.c
 	gcc  -g -I${INCL} -o ReussiteR7.e ReussiteR7.c InteractionR7.o R7.o Tas.o AfficherTas.o Alea.o -L${LIB} -lmachine_trace -L/usr/X11R6/lib -lX11 -lm
 
