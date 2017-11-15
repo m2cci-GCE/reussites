@@ -7,8 +7,6 @@
 
 #include "QLL.h"
 
-#define c 2
-
 /* Tableau de jeu */
 
 int L=2 ;
@@ -27,7 +25,7 @@ void SaisirLocTasQLL() {
 
 	for (i = 0 ; i < L ; i++) {
 		LocSeriesQLL[i].NC = i+2 ;
-		LocSeriesQLL[i].NL = c ; 
+		LocSeriesQLL[i].NL = 2 ; 
 	}
 }
 
@@ -41,6 +39,7 @@ void CreerTableauInitialQLL(int NbCarteJeu) {
 	
 	/* Création des tas de la ligne de jeu */
 	int i;
+	L = 2;
 	for (i = 0 ; i < L ; i++) {
 		CreerTasVide(LocSeriesQLL[i], empile, &(LigneQLL[i]));
 		DeplacerHautSur(&TalonQLL, &(LigneQLL[i]));
@@ -83,15 +82,22 @@ void AfficherQLL(){
 
 
 void JouerTasQLL(Tas *T, ModeTrace MT){
-	LocSeriesQLL[L].NC = LocSeriesQLL[L-1].NC + 1 ;
-	LocSeriesQLL[L].NL = c;
-	/*printf("Localisation Carte tirée : %d -- %d \n", LocSeriesQLL[L].NC, LocSeriesQLL[L].NL);*/
+
+	if ( LocSeriesQLL[L-1].NC == 13 ) {
+		LocSeriesQLL[L].NC = 2 ;
+		LocSeriesQLL[L].NL = LocSeriesQLL[L-1].NL + 1;
+	}
+	else {
+		LocSeriesQLL[L].NC = LocSeriesQLL[L-1].NC + 1 ;
+		LocSeriesQLL[L].NL = LocSeriesQLL[L-1].NL;
+	}
+
 	CreerTasVide(LocSeriesQLL[L], empile, &(LigneQLL[L]));
 	DeplacerHautSur(T, &(LigneQLL[L]));
 	RetournerCarteSur(&(LigneQLL[L]));
 	L = L+1 ;
 	if ( MT == AvecTrace ) {
-		AfficherQLL(); /* */
+		AfficherQLL();
 	}
 }
 
@@ -110,7 +116,6 @@ void ParcourirTas(Tas *TabT, ModeTrace MT){
 	i=1;
 	while (!stable) {
 		booleen mouv = faux;
-		/*printf("i = %d \n",i);*/
 		while ( (L-i) >= 2 && !(ComparerTas(TabT[L-i], TabT[L-2-i])) ) {
 			i = i+1;
 		}
@@ -123,7 +128,7 @@ void ParcourirTas(Tas *TabT, ModeTrace MT){
 			mouv = vrai;
 		}
 		
-		if ( MT == AvecTrace ) {
+		if ( MT == AvecTrace && mouv == vrai ) {
 			AfficherQLL();
 		}
 
@@ -131,7 +136,6 @@ void ParcourirTas(Tas *TabT, ModeTrace MT){
 			stable = vrai;
 		}
 	}
- 
 }
 
 
@@ -154,7 +158,7 @@ void FinPartieQLL(ModeTrace MT) {
 void JouerUneQLL(ModeTrace MT, int NbCarteJeu){
 
 	if ( MT == AvecTrace ) {
-		AfficherQLL(); /* */
+		AfficherQLL();
 	}
 	while ( !TasVide(TalonQLL) ) {
 		JouerTasQLL(&TalonQLL, MT);
