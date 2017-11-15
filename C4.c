@@ -167,7 +167,7 @@ void JouerUneC4(booleen* Status, ModeTrace MT)
 void ObserverC4(int NP)
 {
 	booleen Status;
-	int i;
+	int i=0;
 
 	/* Première partie */
 	CreerJeuInitialC4();
