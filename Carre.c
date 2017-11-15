@@ -217,7 +217,7 @@ void AnalyserCarre(int NP)
 		Status==vrai?G++:P++;
 	}
 
-	taux = 100.0 * (double)G/(double)P;
+	taux = 100.0 * (double)G/(double)NP;
 
 	printf("Sur %d partie(s) jouée(s) vous en aves gagné %d et perdu %d.\n",NP,G,P);
 	printf("Taux de réussite : %.2lf%%\n",taux);
