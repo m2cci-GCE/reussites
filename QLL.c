@@ -214,6 +214,7 @@ void AnalyserQLL(int NP, int NbCarteJeu){
 		else {
 			nbP = nbP + 1;
 		}
+		ReformerTableauInitialQLL();
 	}
 	
 	float pct, rg, rp;
