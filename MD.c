@@ -15,15 +15,13 @@ char TexteCouleurMD[5][8] = {"", "Trefle", "Carreau", "Coeur", "Pique"};
 
 /* Tableau de jeu */
 
-/*int NumTourMD;*/
-
 typedef Tas SerieCouleurMD;
 SerieCouleurMD LigneMD[DerniereCouleur+1];
 
 Tas TalonMD;
 Tas TStockMD[4];
 
-	/* localisation des tas */
+/* localisation des tas */
 Localisation LocSeriesMD[DerniereCouleur+1];
 Localisation LocTalonMD;
 Localisation LocTStockMD[4];
@@ -62,23 +60,20 @@ void CreerTableauInitialMD(){
   Couleur Co;
 
   SaisirLocTasMD();
-  /*NumTourMD = 1;*/
 
-  /* Création du talon avec un jeu de 32 cartes et du rebut avec un tas vide */
+  /* Création du talon avec un jeu de 32 cartes*/
   CreerJeuNeuf(32, LocTalonMD, &TalonMD);
   BattreTas(&TalonMD);
 
 
   /*Création des tas de stockage vides*/
   for(j=0; j<4; j++){
-  
   	CreerTasVide(LocTStockMD[j], empile, &(TStockMD[j]));
   }
 
   /* Création des séries de chaque couleur vides*/
   for (Co=PremiereCouleur; Co<=DerniereCouleur; Co++){
-
-      CreerTasVide(LocSeriesMD[Co], empile, &(LigneMD[Co]));
+	CreerTasVide(LocSeriesMD[Co], empile, &(LigneMD[Co]));
     }
 }
 
@@ -86,38 +81,33 @@ void CreerTableauInitialMD(){
 
 void ReformerTableauInitialMD(){
 
-  int j;
+  CreerTableauInitialMD();
+
+  /*int j;
   Couleur Co;
-  struct adCarte *i;  
+  struct adCarte *i;*/
 
 
   /* On reforme le talon, en empilant les cartes des tas de stockage et des séries croissantes */ 
-  for(j=0; j<4; j++){
-	  
+  /*for(j=0; j<4; j++){	  
 	RetournerTas(&(TStockMD[j]));
-	EmpilerTas(&(TStockMD[j]));
-	PoserTasSurTas(&(TStockMD[j]), &TalonMD);
-	EmpilerTas(&(TStockMD[j])); 	
+  	PoserTasSurTas(&(TStockMD[j]), &TalonMD);
   }
 
-  /*PoserTasSurTas(&RebutR7, &TalonR7);*/
   for (Co=PremiereCouleur; Co<=DerniereCouleur; Co++){
-
-      RetournerTas(&(LigneMD[Co]));
-      EmpilerTas(&(LigneMD[Co]));
-      PoserTasSurTas(&(LigneMD[Co]), &TalonMD);
-      EmpilerTas(&(LigneMD[Co])); 
-    }
+	RetournerTas(&(LigneMD[Co]));
+	PoserTasSurTas(&(LigneMD[Co]), &TalonMD);
+  }
 
   BattreTas(&TalonMD);
 
   
   i = TalonMD.tete;
 
-  while((*i).suiv != NULL){
+  while(i != NULL){
 	(*i).elt.VC = faux;
 	i = (*i).suiv;
-  }
+  }*/
 }
 
 
@@ -134,13 +124,13 @@ void AfficherMD(){
   AfficherTas(TalonMD, "Talon");
 
   for(j=0; j<4; j++){
-
 	AfficherTas(TStockMD[j], "Stockage");
   }
 
-  for (Co=PremiereCouleur; Co<=DerniereCouleur; Co++)
-    AfficherTas(LigneMD[Co], TexteCouleurMD[Co]);
-	
+  for (Co=PremiereCouleur; Co<=DerniereCouleur; Co++){
+	AfficherTas(LigneMD[Co], TexteCouleurMD[Co]);
+  }	
+
   AttendreCliquer();
 }
 
@@ -148,13 +138,14 @@ void AfficherMD(){
 
 
 
-void PlacerStock(Tas *T, booleen *OK){
+void PlacerStockMD(Tas *T, booleen *OK){
 
-  int j=0;
+  int j;
   booleen b = faux;
   Rang RT, RSurTS;
 
   RT = LeRang(CarteSur(*T));
+  j=0;
   
 
   while(j<=4 && !b){
@@ -183,7 +174,7 @@ void PlacerStock(Tas *T, booleen *OK){
 void JouerTasMD(Tas *T, booleen *OK)
 {
   Couleur Co;
-  Rang RT, RSur;/*, RSurTS1, RSurTS2, RSurTS3, RSurTS4;*/
+  Rang RT, RSur;
 
   Co = LaCouleur(CarteSur(*T));
   RT = LeRang(CarteSur(*T));
@@ -194,7 +185,7 @@ void JouerTasMD(Tas *T, booleen *OK)
 	if(RT == Sept){
 	        DeplacerHautSur(T, &(LigneMD[Co]));
 	}else{
-		PlacerStock(T, OK);
+		PlacerStockMD(T, OK);
 	}
   }
 
@@ -205,7 +196,7 @@ void JouerTasMD(Tas *T, booleen *OK)
 	if(RT == RangSuivant(RSur)){
 		DeplacerHautSur(T, &(LigneMD[Co]));
 	}else{
-		PlacerStock(T, OK);
+		PlacerStockMD(T, OK);
 	}
   }	
 }
@@ -213,7 +204,9 @@ void JouerTasMD(Tas *T, booleen *OK)
 
 
 
-void JouerStockMD(Tas *T, ModeTrace MT){
+void JouerStockMD(Tas *T, ModeTrace MT, booleen *b0){
+
+  *b0 = faux;
 
   Couleur Co;
   Rang RT, RSurSC;
@@ -230,6 +223,9 @@ void JouerStockMD(Tas *T, ModeTrace MT){
 
 			DeplacerHautSur(T, &(LigneMD[Co]));
 
+			if (MT == AvecTrace)				
+				AfficherMD();
+
 			if(!TasVide(*T)){
 				RT = LeRang(CarteSur(*T));
 				Co = LaCouleur(CarteSur(*T));
@@ -237,9 +233,9 @@ void JouerStockMD(Tas *T, ModeTrace MT){
 
 			if(!TasVide(LigneMD[Co])){
 				RSurSC = LeRang(CarteSur(LigneMD[Co]));
-				if (MT == AvecTrace)
-					AfficherMD();
 			}
+
+			*b0 = vrai;
 		}
 	}
   }
@@ -252,7 +248,9 @@ void JouerStockMD(Tas *T, ModeTrace MT){
 
 void JouerUnTourMD(ModeTrace MT){
   
-  int j=0;
+  int j;
+  booleen b0 = vrai;
+ 
   booleen OK;
 
   
@@ -268,11 +266,22 @@ void JouerUnTourMD(ModeTrace MT){
 	JouerTasMD(&TalonMD, &OK);
 	if (MT == AvecTrace)
 		AfficherMD();
+	
+	j=0;
+	while(j<4){
+		JouerStockMD(&(TStockMD[j]), MT, &b0);
+		j=j+1;
 
-	for(j=0; j<4; j++){
-		JouerStockMD(&(TStockMD[j]), MT);
+		if(b0){
+			j=0;
+		}
 	}
+
+	/*for(j=0; j<4; j++){
+		JouerStockMD(&(TStockMD[j]), MT);
+	}*/
   }
+
   while (OK && !TasVide(TalonMD));
 }
 
@@ -284,10 +293,10 @@ void JouerUneMD(ModeTrace MT){
   JouerUnTourMD(MT);
 
   int i;
-  booleen b = faux;
+  booleen b = vrai;
 
   for(i=0; i<4; i++){
-		b = b || TasVide(TStockMD[i]);
+		b = b && TasVide(TStockMD[i]);
   }
 
   /*N'afficher le résultat que si on est en mode AvecTrace */
@@ -328,17 +337,17 @@ void AnalyserMD(int NP){
 	int r=0;
 
 	int k;
-	booleen b = faux;
+	booleen b = vrai;
 
 
 	CreerTableauInitialMD();
 
-	for (i = 1 ; i <= NP ; i++) {
+	for (i=1 ; i<=NP ; i++) {
 
 		JouerUneMD(SansTrace);
 
 		for(k=0; k<4; k++){
-			b = b || TasVide(TStockMD[k]);
+			b = b && TasVide(TStockMD[k]);
   		}
 
 		if (TasVide(TalonMD) && b){ /* si le Talon est vide alors c'est qu'on a gagné */
