@@ -82,32 +82,6 @@ void CreerTableauInitialMD(){
 void ReformerTableauInitialMD(){
 
   CreerTableauInitialMD();
-
-  /*int j;
-  Couleur Co;
-  struct adCarte *i;*/
-
-
-  /* On reforme le talon, en empilant les cartes des tas de stockage et des séries croissantes */ 
-  /*for(j=0; j<4; j++){	  
-	RetournerTas(&(TStockMD[j]));
-  	PoserTasSurTas(&(TStockMD[j]), &TalonMD);
-  }
-
-  for (Co=PremiereCouleur; Co<=DerniereCouleur; Co++){
-	RetournerTas(&(LigneMD[Co]));
-	PoserTasSurTas(&(LigneMD[Co]), &TalonMD);
-  }
-
-  BattreTas(&TalonMD);
-
-  
-  i = TalonMD.tete;
-
-  while(i != NULL){
-	(*i).elt.VC = faux;
-	i = (*i).suiv;
-  }*/
 }
 
 
@@ -188,8 +162,6 @@ void JouerTasMD(Tas *T, booleen *OK)
 		PlacerStockMD(T, OK);
 	}
   }
-
-
 
   else{
 	RSur = LeRang(CarteSur(LigneMD[Co]));
