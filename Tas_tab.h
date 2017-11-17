@@ -3,7 +3,7 @@
    d'apres les algorithmes de Pierre-Claude Scholl              */
 /*--------------------------------------------------------------*/
 
-#include "TypesConst.h"
+#include "TypesConst_tab.h"
 
 /*-----------------------------------*/
 /* Specifications des objets de base */

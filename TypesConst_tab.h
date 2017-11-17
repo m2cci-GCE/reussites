@@ -79,7 +79,7 @@ struct adCarte {
 };
 */
 
-typedef Cartes[HmTas] TabCartes;
+typedef Carte TabCartes[HmTas];
 
 typedef struct {
   Localisation LT;

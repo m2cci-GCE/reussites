@@ -21,15 +21,7 @@
 
 Couleur CouleurSuivante(Couleur C)
 {
-	if (C<DerniereCouleur) 
-	{
-		C++;
-	} 
-	else 
-	{	
-		C=PremiereCouleur;
-	}
-	return C;
+	return C==DerniereCouleur?PremiereCouleur:C+1;
 }
 
 /* Rangs */
@@ -37,15 +29,7 @@ Couleur CouleurSuivante(Couleur C)
 
 Rang RangSuivant(Rang R)
 {
-	if (R<DernierRang)
-	{
-		R++;
-	} 
-	else 
-	{
-		R=PremierRang;
-	}
-	return R;
+	return R==DernierRang?PremierRang:R+1;
 }
 
 /*--------------------------------------------------------------------*/
@@ -68,12 +52,12 @@ Couleur LaCouleur(Carte C)
 
 Visibilite EstCachee(Carte C)
 {
-	return !C.VC;
+	return C.VC==faux;
 }
 
 Visibilite EstDecouverte(Carte C)
 {
-	return C.VC;
+	return C.VC==vrai;
 }
 
 	/* Comparaison de cartes */
@@ -146,7 +130,6 @@ Pré-condition : l'emplacement L est disponible
 **************************************************************** */
 void CreerTasVide(Localisation L, Mode M, Tas *T)
 {
-	T = (Tas *) malloc (sizeof(Tas));
 	T->LT = L;
 	T->MT = M;
 	T->RT = actif;
@@ -160,10 +143,7 @@ devient libre pour un autre tas.
 Pré-condition : le tas T est vide et actif
 **************************************************************** */
 void SupprimerTasVide(Tas *T) {
-	T->LT.NL = 0;
-	T->LT.NC = 0;
 	T->RT = inactif;
-	/*free(T); ????*/
 }
 
 /* *************************************************************
@@ -203,6 +183,7 @@ void CreerJeuNeuf(int N, Localisation L, Tas *T)
 			T->tabCartes[i].CC = Co;
 			T->tabCartes[i].RC = Rg;
 			T->tabCartes[i].VC = faux;
+			i++;
     }
   }
 }
@@ -215,7 +196,7 @@ carte situee au dessus du tas
 **************************************************************** */
 Carte CarteSur(Tas T)
 {
-	return T.tabCarte[T.HT-1];
+	return T.tabCartes[T.HT-1];
 }
 
 /* *************************************************************
@@ -234,7 +215,7 @@ Précondition : i <= LaHauteur(T)
 **************************************************************** */
 Carte IemeCarte(Tas T, int i)
 {
-	return T.tabCarte[i-1];
+	return T.tabCartes[i-1];
 }
 
 	/* Retournement d'une carte sur un tas */
@@ -246,7 +227,7 @@ Pré-condition : T non vide
 **************************************************************** */
 void RetournerCarteSur(Tas *T) 
 {
-	T->tabCarte[T->HT-1].VC = !(T->tabCarte[T->HT-1].VC);
+	T->tabCartes[T->HT-1].VC = EstDecouverte(CarteSur(*T))?faux:vrai;
 }
 
 /* *************************************************************
@@ -256,7 +237,7 @@ Pré-condition : T non vide
 **************************************************************** */
 void RetournerCarteSous(Tas *T)
 {
-	T->tabCarte[0].VC = !(T->tabCarte[0].VC);
+	T->tabCartes[0].VC = EstDecouverte(CarteSous(*T))?faux:vrai;
 }
 
 	/* Modification d'un tas */
@@ -297,13 +278,11 @@ bas le tas T
 **************************************************************** */
 void BattreTas(Tas *T)
 {
-	int k,n,i,j;
-	n=T->HT;
-	for (k=1; k<=n; k++)
+	int i,j;
+	for (i=1 ; i<=T->HT ; i++)
 	{
-		i=UnEntier(n);
-		j=UnEntier(n);
-		EchangerCartes(i, j, T);
+		j=UnEntier(T->HT);
+		EchangerCartes(i,j,T);
 	}
 }
 
@@ -314,11 +293,15 @@ retourne le tas T : la premiere devient la derniere et la visibilite est inverse
 void RetournerTas(Tas *T)
 {
 	int i;
-
-	for (i=0 ; i<(T->HT)/2 ; i++)
+	
+	for (i=0 ; i<=LaHauteur(*T)/2-1 ; i++)
 	{
-		EchangerCartes(i,(T->HT-1)-i,T);
+		EchangerCartes(i+1,LaHauteur(*T)-i,T);
 	}
+	for (i=0 ; i<LaHauteur(*T) ; i++)
+	{
+		T->tabCartes[i].VC = EstDecouverte(T->tabCartes[i])?faux:vrai;
+	}	
 }
 
 
@@ -343,7 +326,7 @@ void AjouterCarteSousTas (Carte c, Tas *T)
 {
 	int i;
 	T->HT++;
-	for (i=T->HT-1 ; i>O ; i--)
+	for (i=T->HT-1 ; i>0 ; i--)
 	{
 		T->tabCartes[i] = T->tabCartes[i-1];
 	}
@@ -357,7 +340,7 @@ Pré-condition : T1 n'est pas vide, T2 est actif.
 ********************************************************************************* */
 void DeplacerHautSur(Tas *T1, Tas *T2)
 {
-	AjouterCarteSurTas(T1->tabCartes[HT-1],T2);
+	AjouterCarteSurTas(T1->tabCartes[T1->HT-1],T2);
 	T1->HT--;
 }
 
@@ -368,7 +351,7 @@ Pré-condition : T1 n'est pas vide, T2 est actif.
 ********************************************************************************* */
 void DeplacerHautSous(Tas *T1, Tas *T2)
 {
-	AjouterCarteSousTas(T->tabCartes[HT-1],T2);
+	AjouterCarteSousTas(T1->tabCartes[T1->HT-1],T2);
 	T1->HT--;
 }
 
@@ -381,7 +364,7 @@ void DeplacerBasSur(Tas *T1, Tas *T2)
 {
 	int i;
 	AjouterCarteSurTas(T1->tabCartes[0],T2);
-	for (i=0 ; i<T1->HT-2 ; i++)
+	for (i=0 ; i<T1->HT-1 ; i++)
 	{
 		T1->tabCartes[i] = T1->tabCartes[i+1];
 	}
@@ -397,7 +380,7 @@ void DeplacerBasSous(Tas *T1, Tas *T2)
 {
 	int i;
 	AjouterCarteSousTas(T1->tabCartes[0],T2);
-	for (i=0 ; i<T1->HT-2 ; i++)
+	for (i=0 ; i<T1->HT-1 ; i++)
 	{
 		T1->tabCartes[i] = T1->tabCartes[i+1];
 	}
@@ -412,14 +395,14 @@ Pré-condition : T1 contient la carte et T2 est actif.
 void DeplacerCarteSur(Couleur C, Rang R, Tas *T1, Tas *T2)
 {
 	int i,j;
-	for (i=0 ; i<=T1->HT-1 ; i++)
+	for (i=0 ; i<T1->HT ; i++)
 	{
 		if ((T1->tabCartes[i].CC == C) && (T1->tabCartes[i].RC == R))
 		{
 			AjouterCarteSurTas(T1->tabCartes[i],T2);
-			for (j=i ; j<=T1-HT-1 ; j++)
+			for (j=i ; j<T1->HT-1 ; j++)
 			{
-				T1->tabCartes[i] = T1->tabCartes[i+1];
+				T1->tabCartes[j] = T1->tabCartes[j+1];
 			}
 			T1->HT--;
 			break;
@@ -441,10 +424,9 @@ ni leur mode d'étalement.
 void PoserTasSurTas(Tas *T1, Tas *T2)
 {
 	int i;
-	T2->HT += T1->HT;
-	for (i=0 ; i<T1->HT-1 ; i++)
+	for (i=0 ; i<T1->HT ; i++)
 	{
-		T2->tabCartes[T2->HT-1+i] = T1->tabCartes[i];
+		AjouterCarteSurTas(T1->tabCartes[i],T2);
 	}
 	T1->HT = 0;
 }
