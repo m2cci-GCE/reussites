@@ -3,7 +3,7 @@
    d'apres les algorithmes de Pierre-Claude Scholl              */
 /*--------------------------------------------------------------*/
 
-/* Le relais des 7 */
+/* Montee-Descente */
 
 #include <stdio.h>
 #include "MD.h"
@@ -61,17 +61,17 @@ void CreerTableauInitialMD(){
 
   SaisirLocTasMD();
 
-  /* Création du talon avec un jeu de 32 cartes*/
+  /* CrÃ©ation du talon avec un jeu de 32 cartes*/
   CreerJeuNeuf(32, LocTalonMD, &TalonMD);
   BattreTas(&TalonMD);
 
 
-  /*Création des tas de stockage vides*/
+  /*CrÃ©ation des tas de stockage vides*/
   for(j=0; j<4; j++){
   	CreerTasVide(LocTStockMD[j], empile, &(TStockMD[j]));
   }
 
-  /* Création des séries de chaque couleur vides*/
+  /* CrÃ©ation des sÃ©ries de chaque couleur vides*/
   for (Co=PremiereCouleur; Co<=DerniereCouleur; Co++){
 	CreerTasVide(LocSeriesMD[Co], empile, &(LigneMD[Co]));
     }
@@ -87,7 +87,7 @@ void ReformerTableauInitialMD(){
 
 
 
-/* Visualisation des états du jeu */
+/* Visualisation des Ã©tats du jeu */
 
 void AfficherMD(){
 
@@ -267,7 +267,7 @@ void JouerUneMD(ModeTrace MT){
 		b = b && TasVide(TStockMD[i]);
   }
 
-  /*N'afficher le résultat que si on est en mode AvecTrace */
+  /*N'afficher le rÃ©sultat que si on est en mode AvecTrace */
   if (MT==AvecTrace) { 
 	if (TasVide(TalonMD) && b){
 		printf("Vous avez GAGNE !\n");
@@ -301,7 +301,7 @@ void ObserverMD(int NP)
 
 void AnalyserMD(int NP){
 
-	int i; /* variable pour le parcours des parties (de 1 à NP) */
+	int i; /* variable pour le parcours des parties (de 1 Ã  NP) */
 	int r=0;
 
 	int k;
@@ -320,7 +320,7 @@ void AnalyserMD(int NP){
 			b = b && TasVide(TStockMD[k]);
   		}
 
-		if (TasVide(TalonMD) && b){ /* si le Talon est vide alors c'est qu'on a gagné */
+		if (TasVide(TalonMD) && b){ /* si le Talon est vide alors c'est qu'on a gagnÃ© */
 			r = r+1;
 		}
 
@@ -330,10 +330,10 @@ void AnalyserMD(int NP){
 
 	float rg, rp, pct;
 	pct = 100.0/(double)NP ;
-	rg = r*pct ; /* gagnées */
+	rg = r*pct ; /* gagnÃ©es */
 	rp = 100-rg ; /* perdues */
 
 
-	printf("Nombre de parties jouées : %d \nPourcentage total de parties gagnees : %.2f %% \nPourcentage total de parties perdues : %.2f %% \n ", NP, rg, rp);
+	printf("Nombre de parties jouÃ©es : %d \nPourcentage total de parties gagnees : %.2f %% \nPourcentage total de parties perdues : %.2f %% \n ", NP, rg, rp);
 }
 
