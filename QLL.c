@@ -1,7 +1,7 @@
 
-/*--------------------------*/
-/* A la queue leu leu (QLL) */
-/*--------------------------*/
+/*-------------------------------------------------------------------*/
+/* A la queue leu leu (QLL) avec pointeur pour la longueur explicite */
+/*-------------------------------------------------------------------*/
 
 #include <stdio.h>
 
@@ -10,6 +10,7 @@
 /* Tableau de jeu */
 
 int L=2 ;
+int * ptL = &L ;
 Tas TalonQLL ;
 Tas LigneQLL[52] ;
 Localisation LocTalonQLL;
@@ -23,7 +24,7 @@ void SaisirLocTasQLL() {
 	LocTalonQLL.NC = 1;
 	LocTalonQLL.NL = 1;
 
-	for (i = 0 ; i < L ; i++) {
+	for (i = 0 ; i < *ptL ; i++) {
 		LocSeriesQLL[i].NC = i+2 ;
 		LocSeriesQLL[i].NL = 2 ; 
 	}
@@ -39,8 +40,8 @@ void CreerTableauInitialQLL(int NbCarteJeu) {
 	
 	/* Création des tas de la ligne de jeu */
 	int i;
-	L = 2;
-	for (i = 0 ; i < L ; i++) {
+	*ptL = 2;
+	for (i = 0 ; i < *ptL ; i++) {
 		CreerTasVide(LocSeriesQLL[i], empile, &(LigneQLL[i]));
 		DeplacerHautSur(&TalonQLL, &(LigneQLL[i]));
 		RetournerCarteSur(&(LigneQLL[i]));
@@ -51,12 +52,12 @@ void CreerTableauInitialQLL(int NbCarteJeu) {
 void ReformerTableauInitialQLL() {
 	
 	int j;
-	for (j = 1 ; j < L ; j ++) {
-		PoserTasSurTas(&(LigneQLL[L-j]), &(LigneQLL[L-j-1]));
+	for (j = 1 ; j < *ptL ; j ++) {
+		PoserTasSurTas(&(LigneQLL[*ptL-j]), &(LigneQLL[*ptL-j-1]));
 	}
 	PoserTasSurTas(&(LigneQLL[0]), &TalonQLL);
 	RetournerTas(&TalonQLL);
-	L = 2;
+	*ptL = 2;
 	int i;
 	for (i = 0 ; i < 2 ; i++) {
 		CreerTasVide(LocSeriesQLL[i], empile, &(LigneQLL[i]));
@@ -72,7 +73,7 @@ void AfficherQLL(){
 	AfficherTas(TalonQLL, "Talon");
 
 	int i;
-	for (i = 0 ; i < L ; i++) {
+	for (i = 0 ; i < *ptL ; i++) {
 		AfficherTas(LigneQLL[i], "");
 	}
 
@@ -83,19 +84,19 @@ void AfficherQLL(){
 
 void JouerTasQLL(Tas *T, ModeTrace MT){
 
-	if ( LocSeriesQLL[L-1].NC == 13 ) {
-		LocSeriesQLL[L].NC = 2 ;
-		LocSeriesQLL[L].NL = LocSeriesQLL[L-1].NL + 1;
+	if ( LocSeriesQLL[*ptL-1].NC == 13 ) {
+		LocSeriesQLL[*ptL].NC = 2 ;
+		LocSeriesQLL[*ptL].NL = LocSeriesQLL[*ptL-1].NL + 1;
 	}
 	else {
-		LocSeriesQLL[L].NC = LocSeriesQLL[L-1].NC + 1 ;
-		LocSeriesQLL[L].NL = LocSeriesQLL[L-1].NL;
+		LocSeriesQLL[*ptL].NC = LocSeriesQLL[*ptL-1].NC + 1 ;
+		LocSeriesQLL[*ptL].NL = LocSeriesQLL[*ptL-1].NL;
 	}
 
-	CreerTasVide(LocSeriesQLL[L], empile, &(LigneQLL[L]));
-	DeplacerHautSur(T, &(LigneQLL[L]));
-	RetournerCarteSur(&(LigneQLL[L]));
-	L = L+1 ;
+	CreerTasVide(LocSeriesQLL[*ptL], empile, &(LigneQLL[*ptL]));
+	DeplacerHautSur(T, &(LigneQLL[*ptL]));
+	RetournerCarteSur(&(LigneQLL[*ptL]));
+	*ptL = *ptL+1 ;
 	if ( MT == AvecTrace ) {
 		AfficherQLL();
 	}
@@ -116,15 +117,15 @@ void ParcourirTas(Tas *TabT, ModeTrace MT){
 	i=1;
 	while (!stable) {
 		booleen mouv = faux;
-		while ( (L-i) >= 2 && !(ComparerTas(TabT[L-i], TabT[L-2-i])) ) {
+		while ( (*ptL-i) >= 2 && !(ComparerTas(TabT[*ptL-i], TabT[*ptL-2-i])) ) {
 			i = i+1;
 		}
 
-		if ( (L-i) >= 2 ) {
-			for (k = 0 ; k < L-1 ; k++) {
-				PoserTasSurTas(&(TabT[L-1-i+k]), &(TabT[L-2-i+k]));
+		if ( (*ptL-i) >= 2 ) {
+			for (k = 0 ; k < *ptL-1 ; k++) {
+				PoserTasSurTas(&(TabT[*ptL-1-i+k]), &(TabT[*ptL-2-i+k]));
 			}
-			L = L-1;
+			*ptL = *ptL-1;
 			mouv = vrai;
 		}
 		
@@ -132,7 +133,7 @@ void ParcourirTas(Tas *TabT, ModeTrace MT){
 			AfficherQLL();
 		}
 
-		if ( L == 2 || !(mouv) ) {
+		if ( *ptL == 2 || !(mouv) ) {
 			stable = vrai;
 		}
 	}
@@ -145,11 +146,11 @@ void FinPartieQLL(ModeTrace MT) {
 	tmp0 = LigneQLL[0];
 	tmp1 = LigneQLL[1];
 	int i;
-	for (i = 2 ; i < L ; i++){
+	for (i = 2 ; i < *ptL ; i++){
 		LigneQLL[i-2] = LigneQLL[i];
 	}
-	LigneQLL[L-2] = tmp0;
-	LigneQLL[L-1] = tmp1;
+	LigneQLL[*ptL-2] = tmp0;
+	LigneQLL[*ptL-1] = tmp1;
 	
 	ParcourirTas(LigneQLL, MT);	
 }
@@ -165,10 +166,10 @@ void JouerUneQLL(ModeTrace MT, int NbCarteJeu){
 		ParcourirTas(LigneQLL, MT);
 	}
 	
-	if ( TasVide(TalonQLL) && L > 2 ) {
+	if ( TasVide(TalonQLL) && *ptL > 2 ) {
 		FinPartieQLL(MT);
 		if ( MT == AvecTrace) {
-			if ( L <= 2 ) {
+			if ( *ptL <= 2 ) {
 				printf("Vous avez gagné !\n");
 			}
 			else {
@@ -208,7 +209,7 @@ void AnalyserQLL(int NP, int NbCarteJeu){
 
 	for (i = 1 ; i <= NP ; i++) {
 		JouerUneQLL(SansTrace, NbCarteJeu);
-		if (L==2) {
+		if (*ptL==2) {
 			nbG = nbG + 1 ;
 		}
 		else {
@@ -225,10 +226,6 @@ void AnalyserQLL(int NP, int NbCarteJeu){
 	printf("Nombre de parties jouées : %d \nPourcentage total de parties gagnées : %.2f %% \nPourcentage total de parties perdues : %.2f %% \n",NP, rg, rp);
 
 }
-
-
-
-
 
 
 
