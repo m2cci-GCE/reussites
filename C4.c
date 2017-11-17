@@ -99,7 +99,8 @@ void AfficherC4()
 void JouerUneC4(booleen* Status, ModeTrace MT)
 {
 	Couleur Co,CoSource,CoDestination;
-	struct adCarte * AC;
+	/*struct adCarte * AC;*/
+	int i;
 
 	CreerJeuInitialC4();
 	
@@ -110,13 +111,13 @@ void JouerUneC4(booleen* Status, ModeTrace MT)
 	}
         if (MT==AvecTrace)
         {
-	AfficherC4();
+					AfficherC4();
         }
 	
 	CoSource = 1;
 	do
 	{
-		CoDestination = LaCouleur(LigneTalonC4[CoSource].queue->elt);
+		CoDestination = LaCouleur(CarteSur(LigneTalonC4[CoSource]));
 		DeplacerHautSur(&LigneTalonC4[CoSource],&LigneC4[CoDestination]);
 		if (!TasVide(LigneTalonC4[CoSource]))
 		{
@@ -125,7 +126,7 @@ void JouerUneC4(booleen* Status, ModeTrace MT)
 	       	CoSource = CoDestination;
 		if (MT==AvecTrace)
 		{
-		AfficherC4();
+			AfficherC4();
 		}
 	}
 	while (!TasVide(LigneTalonC4[CoSource]));
@@ -149,18 +150,16 @@ void JouerUneC4(booleen* Status, ModeTrace MT)
 	
 	/* gagné ou perdu ? Vérification des couleurs des différents tas */
 	*Status = vrai;
-	for (CoSource = PremiereCouleur ; CoSource<=DerniereCouleur ; CoSource++)
+	CoSource = PremiereCouleur;
+	while (CoSource<=DerniereCouleur && *Status)
 	{
-		AC=LigneC4[CoSource].tete;
-		while((AC != NULL)&&(AC->elt.CC==CoSource))
+		i=1;
+		while (i<=LaHauteur(LigneC4[CoSource]) && (LaCouleur(IemeCarte(LigneC4[CoSource],i))==CoSource))
 		{
-			AC=AC->suiv;
+			i++;
 		}
-		if (AC != NULL)
-		{
-			*Status = faux;
-			break;
-		}
+		*Status = (i>LaHauteur(LigneC4[CoSource]));
+		CoSource++;
 	}
 }
 
