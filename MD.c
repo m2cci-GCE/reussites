@@ -276,10 +276,6 @@ void JouerUnTourMD(ModeTrace MT){
 			j=0;
 		}
 	}
-
-	/*for(j=0; j<4; j++){
-		JouerStockMD(&(TStockMD[j]), MT);
-	}*/
   }
 
   while (OK && !TasVide(TalonMD));
@@ -337,12 +333,14 @@ void AnalyserMD(int NP){
 	int r=0;
 
 	int k;
-	booleen b = vrai;
+	booleen b; 
 
 
 	CreerTableauInitialMD();
 
 	for (i=1 ; i<=NP ; i++) {
+
+		b = vrai;
 
 		JouerUneMD(SansTrace);
 
